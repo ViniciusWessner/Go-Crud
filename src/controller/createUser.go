@@ -3,7 +3,7 @@ package controller
 import (
 	"fmt"
 
-	"github.com/ViniciusWessner/Go-Crud/src/configuration/rest_err"
+	"github.com/ViniciusWessner/Go-Crud/src/configuration/validation"
 	"github.com/ViniciusWessner/Go-Crud/src/controller/model/request"
 	"github.com/gin-gonic/gin"
 )
@@ -11,11 +11,10 @@ import (
 func CreateUser(c *gin.Context){
 	var userRequest request.UserRequest
 
-	if err := c.ShouldBindBodyWithJSON(&userRequest); err != nil{
-		restErr := rest_err.NewBadRequestError(
-			fmt.Sprintf("Temos alguns campos incorretos, error=%s\n", err.Error()))
+	if err := c.ShouldBindJSON(&userRequest); err != nil{
+		errRest := validation.ValidateUserError(err)
 
-		c.JSON(restErr.Code, restErr)
+		c.JSON(errRest.Code, errRest)
 		return
 	}
 
